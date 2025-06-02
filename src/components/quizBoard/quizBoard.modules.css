@@ -1,0 +1,36 @@
+.container {
+    width: 940px;
+    margin: auto auto;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.flexContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pointCounter {
+    border-radius: 2rem;
+    padding: 0.25rem 0.75rem;
+    width: fit-content;
+    letter-spacing: 0px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.trophyImage {
+    width: 1.75rem;
+}
+
+.quizBoard {
+    background-color: var(--dark-blue-color-1);
+    padding: 5rem 10rem;
+    border-radius: 0.5rem;
+    margin-top: 2.5rem;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+}

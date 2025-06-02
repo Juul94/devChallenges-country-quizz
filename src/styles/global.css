@@ -1,0 +1,23 @@
+:root {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: #e2e4f3;
+    background-color: #242424;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.1rem;
+
+    /* COLORS */
+    --gradient-color: linear-gradient(to right, #e65895, #bc6be8);
+    --dark-blue-color-1: #393f6e;
+    --dark-blue-color-2: #343964;
+    --light-color: #e2e4f3;
+    --light-blue-color: #3e9fff;
+    --orange-color: #dd524c;
+    --grey-color: #8b8eab;
+    --yellow-color: #ffecc8;
+}
