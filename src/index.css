@@ -64,7 +64,6 @@ button {
     font-size: 1em;
     font-weight: 500;
     cursor: pointer;
-    background-color: var(--gradient-color);
     font-family: 'Be Vietnam Pro', sans-serif;
     color: #ffffff;
 }
