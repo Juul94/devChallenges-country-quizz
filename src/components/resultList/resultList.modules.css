@@ -1,0 +1,79 @@
+.allAnswersHeading {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.divider {
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px;
+    border-style: solid;
+    border-color: var(--orange-color);
+    margin: 1.25rem 0;
+}
+
+.qusetionResultText {
+    font-size: 0.8rem;
+}
+
+.userAnswer {
+    font-size: 0.8rem;
+}
+
+.questionResultText {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+}
+
+.questionResult {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1.5rem;
+}
+
+.answerCorrect {
+    background: var(--gradient-color);
+    color: white;
+    padding: 0 1rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.resultIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.answerItem {
+    display: flex;
+    gap: 1rem;
+}
+
+.questionDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.arrowDownIcon {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0.2rem 0;
+}
+
+.wrongAnswer {
+    color: red;
+    text-align: center;
+}
+
+.rightAnswer {
+    color: green;
+    text-align: center;
+}

@@ -17,8 +17,21 @@ export interface QuizAnswer {
     selectedOption: string;
     correctOption: string;
     isCorrect: boolean;
+    questionText: string;
 }
 
 export interface ShuffledQuizQuestion extends QuizQuestion {
     shuffledOptions: string[];
+}
+
+export interface QuestionViewModel {
+    questionText: string;
+    questionNumber: number;
+    options: {
+        text: string;
+        isSelected: boolean;
+        isCorrect: boolean;
+        isIncorrect: boolean;
+    }[];
+    isAnswered: boolean;
 }

@@ -1,0 +1,97 @@
+.questionCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.questionText {
+    text-align: center;
+    min-height: 6rem;
+    line-height: 1.4;
+}
+
+.optionsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.btnOption {
+    flex: 1 1 calc(50% - 10px);
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 12px;
+    background-color: var(--dark-blue-color-1);
+    color: var(--white-color);
+    font-size: 1.15rem;
+    font-weight: 500;
+    padding: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btnOption:hover {
+    background: var(--gradient-color);
+}
+
+.btnOption:disabled {
+    cursor: not-allowed;
+}
+
+.correctAnswer {
+    background: var(--gradient-color);
+}
+
+.btnPrevButton,
+.btnNextButton {
+    background-color: var(--dark-blue-color-1);
+    color: var(--white-color);
+    border-radius: 12px;
+}
+
+.btnPrevButton:focus,
+.btnNextButton:focus {
+    outline: none;
+}
+
+.noHoverSelected:hover {
+    background: var(--gradient-color);
+}
+
+.noHoverDefault:hover {
+    background: var(--dark-blue-color-1);
+}
+
+.navigationButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2.5rem;
+    gap: 2rem;
+}
+
+.flex-end {
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .questionText {
+        min-height: 4rem;
+    }
+
+    .btnOption {
+        font-size: 1rem;
+        padding: 1.25rem;
+    }
+
+    .optionsList {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btnPrevButton,
+    .btnNextButton {
+        width: 25%;
+    }
+}

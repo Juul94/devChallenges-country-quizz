@@ -1,0 +1,19 @@
+.flexContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pointCounter {
+    border-radius: 2rem;
+    padding: 0.35rem 0.8rem;
+    width: fit-content;
+    letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.trophyImage {
+    width: 1.5rem;
+}

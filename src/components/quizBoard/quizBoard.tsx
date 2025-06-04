@@ -1,12 +1,10 @@
 import './quizBoard.modules.css';
-import { Fragment, useEffect, useState, type FC } from 'react';
-import TrophyIcon from '@images/trophy.png';
-import CheckIcon from '@icons/Check_round_fill.svg';
-import CloseIcon from '@icons/Close_round_fill.svg';
-import CongratsImage from '@images/congrats.png';
+import { useEffect, useState, type FC } from 'react';
 import { CountryQuestionAPI, QuizAnswer, ShuffledQuizQuestion } from '@typings/quiz';
-import { MdNavigateNext } from 'react-icons/md';
-import { GrFormPrevious } from 'react-icons/gr';
+import Congratulations from '@components/congratulations/congratulations';
+import Question from '@components/question/question';
+import ProgressNumbers from '@components/progressNumbers/progressNumbers';
+import Header from '@components/header/header';
 
 interface QuizBoardProps {
     heading: string;
@@ -28,12 +26,43 @@ const QuizBoard: FC<QuizBoardProps> = () => {
     const totalQuestions: number = 10;
     const apiUrl = 'https://opentdb.com/api.php?amount=10&category=22&type=multiple&difficulty=easy';
 
-    const showNextQuestionButton = currentQuestion + 1 < totalQuestions;
-    const showPrevQuestionButton = currentQuestion > 0;
-    const isAtFirstQuestion = currentQuestion === 0;
-
     const totalCorrectAnswers = userAnswers.filter((answer) => answer.isCorrect).length;
     const isAllQuestionsAnswered = userAnswers.length === totalQuestions;
+
+    const showNextQuestionButton = currentQuestion + 1 < totalQuestions && !isAllQuestionsAnswered;
+    const showPrevQuestionButton = currentQuestion > 0 && !isAllQuestionsAnswered;
+    const isAtFirstQuestion = currentQuestion === 0;
+
+    const currentQ = questions[currentQuestion];
+
+    const transformedOptions = currentQ?.shuffledOptions.map((option) => {
+        const answer = userAnswers.find(({ questionNumber }) => questionNumber === currentQuestion + 1);
+
+        const questionState = {
+            text: option,
+            isSelected: answer?.selectedOption === option,
+            isCorrect: answer?.correctOption === option,
+            isIncorrect: answer?.selectedOption === option && answer?.selectedOption !== answer?.correctOption,
+        };
+
+        return questionState;
+    });
+
+    const questionViewModel = {
+        questionText: currentQ?.question,
+        questionNumber: currentQuestion + 1,
+        options: transformedOptions ?? [],
+        isAnswered: !!userAnswers.find(({ questionNumber }) => questionNumber === currentQuestion + 1),
+    };
+
+    /*
+     *   FUNCTIONS
+     */
+
+    const shuffleOptions = (array: string[]): string[] => {
+        const shuffledArray = [...array].sort(() => Math.random() - 0.5);
+        return shuffledArray;
+    };
 
     const fetchQuestions = async () => {
         const hasAlreadyFetched = questions.length > 0 || isLoadingApi;
@@ -71,107 +100,10 @@ const QuizBoard: FC<QuizBoardProps> = () => {
 
     useEffect(() => {
         fetchQuestions();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showResult]);
 
-    /*
-     *   HANDLERS
-     */
-
-    const handleSelectAnswer = (questionIndex: number, selectedOption: string) => {
-        const question = questions[questionIndex];
-        if (!question) return;
-
-        const questionNumber = questionIndex + 1;
-        const isAnswerCorrect = question.correct_answer === selectedOption;
-
-        // Prevent answering again
-        const alreadyAnswered = userAnswers.some((ans) => ans.questionNumber === questionNumber);
-        if (alreadyAnswered) return;
-
-        const newAnswer: QuizAnswer = {
-            correctOption: question.correct_answer,
-            questionNumber,
-            selectedOption,
-            isCorrect: isAnswerCorrect,
-        };
-
-        setUserAnswers((prev) => [...prev, newAnswer]);
-    };
-
-    const handleNextQuestion = () => {
-        if (isAllQuestionsAnswered) {
-            // To do: Calculate the quiz result and show the result page with the total score and congratulations message
-            setShowResult(true);
-        } else {
-            setCurrentQuestion((prevIndex) => prevIndex + 1);
-
-            const isLastQuestion = currentQuestion + 1 === totalQuestions;
-
-            if (isLastQuestion) {
-                setShowResult(true);
-            }
-        }
-    };
-
-    const handlePrevQuestion = () => {
-        const previousQuestion = currentQuestion - 1;
-        const isFirstQuestion = previousQuestion < 0;
-
-        if (isFirstQuestion) return;
-
-        setCurrentQuestion(previousQuestion);
-        setShowResult(false);
-    };
-
-    const handleResetQuiz = () => {
-        setCurrentQuestion(0);
-        setUserAnswers([]);
-        setShowResult(false);
-        setIsLoadingApi(false);
-        setQuestions([]);
-    };
-
-    // const handleFinishQuiz = () => {
-    //     // Calculate the quiz result and show the result page
-    // };
-
-    const isAnswered = (questionIndex: number) => {
-        const checkUserAnswers = userAnswers.some((answer) => answer.questionNumber === questionIndex + 1);
-        return checkUserAnswers;
-    };
-
-    const isAnswerCorrect = (questionIndex: number) => {
-        const answer = userAnswers.find((answer) => answer.questionNumber === questionIndex + 1);
-        return answer?.isCorrect ?? false;
-    };
-
-    const isOptionSelected = (questionIndex: number, option: string) => {
-        const answer = userAnswers.find(({ questionNumber }) => questionNumber === questionIndex + 1);
-        return answer ? answer.selectedOption === option : false;
-    };
-
-    const isAnyOptionSelected = (questionIndex: number) => {
-        const answer = userAnswers.find(({ questionNumber }) => questionNumber === questionIndex + 1);
-        return answer ? answer.selectedOption !== '' : false;
-    };
-
-    const isOptionCorrect = (questionIndex: number, option: string) => {
-        const answer = userAnswers.find(({ questionNumber }) => questionNumber === questionIndex + 1);
-        return answer ? answer.correctOption === option : false;
-    };
-
-    const isOptionIncorrect = (questionIndex: number, option: string) => {
-        const answer = userAnswers.find(({ questionNumber }) => questionNumber === questionIndex + 1);
-        return answer ? answer.selectedOption !== answer.correctOption && answer.selectedOption === option : false;
-    };
-
-    // Randomly shuffle the options for each question
-    const shuffleOptions = (array: string[]): string[] => {
-        const shuffledArray = [...array].sort(() => Math.random() - 0.5);
-        return shuffledArray;
-    };
-
-    // Available for keyboard navigation to navigate through questions
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'ArrowRight' && showNextQuestionButton) {
@@ -188,107 +120,103 @@ const QuizBoard: FC<QuizBoardProps> = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showNextQuestionButton, showPrevQuestionButton]);
 
+    /*
+     *   HANDLERS
+     */
+
+    const handleSelectAnswer = (questionIndex: number, selectedOption: string) => {
+        const question = questions[questionIndex];
+        if (!question) return;
+
+        const questionNumber = questionIndex + 1;
+        const isAnswerCorrect = question.correct_answer === selectedOption;
+
+        const alreadyAnswered = userAnswers.some((ans) => ans.questionNumber === questionNumber);
+        if (alreadyAnswered) return;
+
+        const newAnswer: QuizAnswer = {
+            correctOption: question.correct_answer,
+            questionNumber,
+            selectedOption,
+            isCorrect: isAnswerCorrect,
+            questionText: question.question,
+        };
+
+        setUserAnswers((prev) => [...prev, newAnswer]);
+    };
+
+    const handleNextQuestion = () => {
+        if (isAllQuestionsAnswered) {
+            setShowResult(true);
+        } else {
+            setCurrentQuestion((prev) => prev + 1);
+        }
+    };
+
+    const handlePrevQuestion = () => {
+        setCurrentQuestion((prev) => prev - 1);
+        setShowResult(false);
+    };
+
+    const handleResetQuiz = () => {
+        setCurrentQuestion(0);
+        setUserAnswers([]);
+        setShowResult(false);
+        setIsLoadingApi(false);
+        setQuestions([]);
+    };
+
+    const handleNumberClick = (number: number) => {
+        if (isAllQuestionsAnswered) return null;
+
+        setCurrentQuestion(number);
+        setShowResult(false);
+    };
+
     if (showResult) {
         return (
-            <div className='container'>
-                <div className='resultBoard'>
-                    <img src={CongratsImage} className='congrasImage' alt='Congratulations image' />
-                    <h4 className='congrasHeading'>Congrats! You completed the quiz.</h4>
-                    <p className='congratsLabel'>{`You answer ${totalCorrectAnswers}/${totalQuestions} correctly`}</p>
-
-                    <button onClick={() => handleResetQuiz()} className='btnResetGame'>
-                        Play again
-                    </button>
-                </div>
-            </div>
+            <Congratulations
+                totalCorrectAnswers={totalCorrectAnswers}
+                totalQuestions={totalQuestions}
+                handleResetQuiz={handleResetQuiz}
+                userAnswers={userAnswers}
+            />
         );
     }
 
     return (
-        <Fragment>
-            <div className='container'>
-                <div className='flexContainer'>
-                    <h1>Country Quiz</h1>
+        <div className='container'>
+            <Header totalCorrectAnswers={totalCorrectAnswers} totalQuestions={totalQuestions} />
 
-                    <div className='highlightGradient pointCounter'>
-                        <img src={TrophyIcon} className='trophyImage' alt='Trophy' />
+            <div className='quizBoard'>
+                <ProgressNumbers
+                    currentQuestion={currentQuestion}
+                    totalQuestions={totalQuestions}
+                    userAnswers={userAnswers}
+                    handleNumberClick={handleNumberClick}
+                />
 
-                        <h5>
-                            {totalCorrectAnswers} / {totalQuestions}
-                        </h5>
-                    </div>
-                </div>
-
-                <div className='quizBoard'>
-                    <div className='progressBar'>
-                        {Array.from({ length: totalQuestions }, (_, i) => (
-                            <div
-                                key={i}
-                                className={`progressCircle ${
-                                    i < currentQuestion || isAnswered(i) ? 'answered' : i === currentQuestion ? 'active' : ''
-                                }`}>
-                                {isAnswered(i) ? (
-                                    isAnswerCorrect(i) ? (
-                                        <img src={CheckIcon} className='checkIconNumber' alt='Correct answer' />
-                                    ) : (
-                                        <img src={CloseIcon} className='closeIconNumber' alt='Wrong answer' />
-                                    )
-                                ) : (
-                                    i + 1
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
-                    {isLoadingApi ? (
-                        <p>Loading questions...</p>
-                    ) : (
-                        questions
-                            .filter((_, index) => currentQuestion === index)
-                            .map((question, index) => (
-                                <div key={index} className='questionCard'>
-                                    <h4 className='questionText'>{question.question}</h4>
-
-                                    <div className='optionsList'>
-                                        {question.shuffledOptions?.map((option, optionIndex) => (
-                                            <button
-                                                key={optionIndex}
-                                                onClick={() => handleSelectAnswer(currentQuestion, option)}
-                                                className={`btnOption ${isOptionSelected(currentQuestion, option) ? 'correctAnswer noHoverSelected' : isAnyOptionSelected(currentQuestion) ? 'noHoverDefault' : ''}`}
-                                                disabled={isAnyOptionSelected(currentQuestion)}>
-                                                {option}
-
-                                                {isOptionCorrect(currentQuestion, option) && (
-                                                    <img src={CheckIcon} alt='Correct answer' />
-                                                )}
-
-                                                {isOptionIncorrect(currentQuestion, option) && (
-                                                    <img src={CloseIcon} alt='Wrong answer' />
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <div
-                                        className={`navigationButtons ${isAtFirstQuestion || isAllQuestionsAnswered ? 'flex-end' : ''}`}>
-                                        {showPrevQuestionButton && !isAllQuestionsAnswered && (
-                                            <button onClick={handlePrevQuestion} className='prevButton'>
-                                                <GrFormPrevious />
-                                            </button>
-                                        )}
-
-                                        {(showNextQuestionButton || isAllQuestionsAnswered) && (
-                                            <button onClick={handleNextQuestion} className='nextButton'>
-                                                <MdNavigateNext />
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
-                    )}
-                </div>
+                {isLoadingApi ? (
+                    <p>Loading questions...</p>
+                ) : (
+                    questions
+                        .filter((_, index) => currentQuestion === index)
+                        .map((_, index) => (
+                            <Question
+                                key={index}
+                                viewModel={questionViewModel}
+                                onSelectOption={(option) => handleSelectAnswer(currentQuestion, option)}
+                                onNext={handleNextQuestion}
+                                onPrev={handlePrevQuestion}
+                                showNext={showNextQuestionButton}
+                                showPrev={showPrevQuestionButton}
+                                isAllAnswered={isAllQuestionsAnswered}
+                                isFirst={isAtFirstQuestion}
+                            />
+                        ))
+                )}
             </div>
-        </Fragment>
+        </div>
     );
 };
 

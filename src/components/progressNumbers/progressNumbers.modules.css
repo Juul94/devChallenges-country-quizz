@@ -1,0 +1,56 @@
+.progressBar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+}
+
+.progressCircle {
+    min-width: 42px;
+    min-height: 42px;
+    border-radius: 50%;
+    background-color: var(--dark-blue-color-1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.progressCircle.answered {
+    background: var(--gradient-color);
+}
+
+.progressCircle.active {
+    background: var(--gradient-color);
+    box-shadow: 0 0 5px rgba(100, 100, 255, 1);
+    border: 2px solid white;
+}
+
+.progressCircle:hover {
+    background: var(--gradient-color);
+    box-shadow: 0 0 5px rgba(100, 100, 255, 1);
+    border: 2px solid white;
+}
+
+.progressCircle.smallNumber {
+    min-width: 25px;
+    min-height: 25px;
+}
+
+@media (max-width: 768px) {
+    .progressBar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .progressCircle {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 590px) {
+    .progressBar {
+        justify-content: flex-start;
+    }
+}
